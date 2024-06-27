@@ -1,19 +1,68 @@
-<p-button (click)="showDialog()" icon="pi pi-user" label="Join the room" />
-<p-dialog [(visible)]="visible">
+<p-toast></p-toast>
+<!-- MODALS -->
+<p-dialog [(visible)]="loginVisible">
     <ng-template pTemplate="headless">
         <div class="flex flex-column px-8 py-5 gap-4" style="border-radius: 12px; background-image: radial-gradient(circle at left top, var(--primary-400), var(--primary-700))">
-            <p-button icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" class="cancel" />
+            <p-button icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" class="cancel" (click)="closeLoginDialog()" />
             <div class="inline-flex flex-column gap-2">
+                <h2 for="a" class="text-primary-50 font-semibold">Play as Guest</h2>
                 <label for="username" class="text-primary-50 font-semibold">Username</label>
-                <input pInputText id="username" class="bg-white-alpha-20 border-none p-3 text-primary-50"/>
+                <input pInputText id="username" class="bg-white-alpha-20 border-none p-3 text-primary-50" [(ngModel)]="username" />
             </div>
             <div class="flex align-items-center gap-2">
-                <p-button label="Enter" (click)="closeDialog()" [text]="true" styleClass="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10" class="w-full"  />
+                <p-button label="Enter" [text]="true" styleClass="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10" class="w-full" (onClick)="login()"  />
             </div>
-            <p-button label="Login with Google" icon="pi pi-google"  class="p-button-google" severity="secondary" >
-            </p-button>
-            <p-button label="Login with GitHub" icon="pi pi-github"  class="p-button-github" severity="secondary" >
+            <h2 for="n" class="text-primary-50 font-semibold">Or login</h2>
+            <p-button (onClick)="login('google')" label="Login with Google" icon="pi pi-google"  class="p-button-google" severity="secondary" >
             </p-button>
         </div>
     </ng-template>
 </p-dialog>
+
+<p-dialog [(visible)]="createRoomVisible">
+    <ng-template pTemplate="headless">
+        <div class="flex flex-column px-8 py-5 gap-4" style="border-radius: 12px; background-image: radial-gradient(circle at left top, var(--primary-400), var(--primary-700))">
+            <p-button icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" class="cancel" (click)="closeCreateRoomDialog()" />
+            <div class="inline-flex flex-column gap-2">
+                <h2 for="a" class="text-primary-50 font-semibold">Create Room</h2>
+                <label for="roomName" class="text-primary-50 font-semibold">Room Name</label>
+                <input pInputText id="roomName" class="bg-white-alpha-20 border-none p-3 text-primary-50" [(ngModel)]="roomName" />
+                <label for="roomPassword" class="text-primary-50 font-semibold">Password</label>
+                <input type="password" pInputPassword id="roomPassword" class="bg-white-alpha-20 border-none p-3 text-primary-50" [(ngModel)]="roomPassword" />
+                <label for="roomMaxPlayers" class="text-primary-50 font-semibold">Max Players</label>
+                <input type="number" pInputText id="roomMaxPlayers" class="bg-white-alpha-20 border-none p-3 text-primary-50" [(ngModel)]="roomMaxUsers" />
+            </div>
+            <div class="flex align-items-center gap-2">
+                <p-button label="Create" [text]="true" styleClass="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10" class="w-full" (onClick)="createRoom()"  />
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>
+<!-- END MODALS -->
+
+
+<p-button label="Create Room" icon="pi pi-plus" (click)="showCreateRoomDialog()" class="p-button-warning" />
+
+<div style="display: flex; justify-content: center; align-items: center;">
+        <p-orderList 
+            [value]="rooms" 
+            [listStyle]="{ 'max-height': '300px' }" 
+            header="List of Rooms"
+            filterBy="name" 
+            filterPlaceholder="Filter by name">
+            <ng-template let-room pTemplate="item" >
+                <div class="flex flex-wrap p-2 align-items-center gap-3">
+                    <div class="flex-1 flex flex-column gap-2">
+                        <span class="font-bold">{{ room.name }}</span>
+                        <div class="flex align-items-center gap-2">
+                            <i class="pi pi-calendar text-sm"></i>
+                            <span>{{ room.createdAt | date: "medium" }}</span>
+                        </div>
+                    </div>
+                    <span class="font-bold text-900">
+                        <p-button label="Join" icon="pi pi-user-plus" (click)="joinRoom(room)" class="p-button-success" />
+                    </span>
+                </div>
+            </ng-template>
+        </p-orderList>
+</div>
