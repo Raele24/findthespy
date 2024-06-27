@@ -36,12 +36,12 @@ export class HomeComponent implements OnInit {
 
   async ngOnInit() {
 
+    const elements = document.getElementsByClassName('p-orderlist-controls');
+    while(elements.length > 0){
+      elements[0].parentNode!.removeChild(elements[0]);
+    } 
     await this.refreshRooms();
 
-    setTimeout(() => { const elements = document.getElementsByClassName('p-orderlist-controls');
-      while(elements.length > 0){
-        elements[0].parentNode!.removeChild(elements[0]);
-      } }, 0.1);
     
   }
 
@@ -64,7 +64,7 @@ export class HomeComponent implements OnInit {
     if(this.roomPassword === '') return this.messageService.add({severity:'error', summary:'Error', detail:'Room password is required!'});
     if(this.roomMaxUsers === 0) return this.messageService.add({severity:'error', summary:'Error', detail:'Room max users is required!'});
     if(localStorage.getItem('username') === null){
-      this.messageService.add({severity:'waring', summary:'Warning', detail:'You must be logged in to create a room!'});
+      this.messageService.add({severity:'warning', summary:'Warning', detail:'You must be logged in to create a room!'});
       this.closeCreateRoomDialog();
       this.showLoginDialog();
     } 

@@ -47,9 +47,18 @@
         <p-orderList 
             [value]="rooms" 
             [listStyle]="{ 'max-height': '300px' }" 
-            header="List of Rooms"
             filterBy="name" 
             filterPlaceholder="Filter by name">
+            <ng-template pTemplate="header" >
+                <div style="display: flex; justify-content: space-between;flex-direction: row;">
+                    <span>List of Rooms</span>
+                    <span id="refresh" class="pi pi-refresh" 
+                        style="color: #9eade6; font-size: 1.3rem;" 
+                        (click)="refreshRooms()" 
+                        onmouseover="this.style.color='#5f7df4'; this.style.transition='all 0.2s';this.style.cursor='pointer'"
+                        onmouseout="this.style.color='#9eade6'" ></span>
+                </div>
+            </ng-template>
             <ng-template let-room pTemplate="item" >
                 <div class="flex flex-wrap p-2 align-items-center gap-3">
                     <div class="flex-1 flex flex-column gap-2">
