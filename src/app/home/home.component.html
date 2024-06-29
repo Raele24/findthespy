@@ -41,9 +41,14 @@
 <!-- END MODALS -->
 
 
-<p-button label="Create Room" icon="pi pi-plus" (click)="showCreateRoomDialog()" class="p-button-warning" />
 
-<div style="display: flex; justify-content: center; align-items: center;">
+
+<div class="container">
+
+    <div class="test"></div>
+
+    <p-button label="Create Room" icon="pi pi-plus" (click)="showCreateRoomDialog()" class="p-button-warning"/>
+
         <p-orderList 
             [value]="rooms" 
             [listStyle]="{ 'max-height': '300px' }" 
@@ -74,4 +79,6 @@
                 </div>
             </ng-template>
         </p-orderList>
+
+    
 </div>
