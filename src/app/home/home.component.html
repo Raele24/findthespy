@@ -1,4 +1,5 @@
 <p-toast></p-toast>
+
 <!-- MODALS -->
 <p-dialog [(visible)]="loginVisible">
     <ng-template pTemplate="headless">
@@ -45,7 +46,7 @@
 
 <div class="container">
 
-    <div class="test"></div>
+    <div class="flex-items">
 
     <p-button label="Create Room" icon="pi pi-plus" (click)="showCreateRoomDialog()" class="p-button-warning"/>
 
@@ -79,6 +80,6 @@
                 </div>
             </ng-template>
         </p-orderList>
-
+    </div>
     
 </div>
