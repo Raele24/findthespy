@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { RoomService } from '../_services/room.service';
 import { ButtonModule } from 'primeng/button';
 import { Guid } from 'guid-typescript';
@@ -14,7 +14,7 @@ import { ToastModule } from 'primeng/toast';
   templateUrl: './room.component.html',
   styleUrl: './room.component.less'
 })
-export class RoomComponent implements OnInit, OnDestroy {
+export class RoomComponent implements OnInit, OnDestroy{
   id: string = '';
   username: string = localStorage.getItem('username')!;
   room: any;
@@ -31,14 +31,14 @@ export class RoomComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  ngOnDestroy() {
-    if(this.room.owner === this.username) {
-      this.deleteRoom();
-    } else {
-      this.leaveRoom();
+  @HostListener('window:beforeunload')
+   async ngOnDestroy() {
+      if(this.room.owner === this.username) {
+        this.deleteRoom();
+      } else {
+        this.leaveRoom();
+      }
     }
-  }
 
   async leaveRoom() {
     let idGuid = Guid.parse(this.id);
