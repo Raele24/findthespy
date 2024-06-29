@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Room } from '../_models/Room';
 import {Md5} from 'ts-md5';
 import { Database, set, ref, get, onValue, child, query, limitToLast } from '@angular/fire/database';
+import { Guid } from 'guid-typescript';
+import { Observable, interval, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -31,16 +33,19 @@ export class RoomService {
     });
   }
 
-  async getAll(){
-    return get(query(ref(this.db, 'rooms'), limitToLast(100))).then((snapshot) => {
-      if (snapshot.exists()) {
-        return snapshot.val();
-      } else {
-        return null;
-      }
-    }).catch((error) => {
-      console.error(error);
-    });
+  getAll(): Observable<any[]> {
+    return interval(1000).pipe(
+      switchMap(() => get(query(ref(this.db, 'rooms'), limitToLast(100))).then((snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          return Object.keys(data).map(key => ({ key, ...data[key] }));
+        } else {
+          return [];
+        }
+      }).catch(error => {
+        console.error(error);
+        return [];
+      })));
   }
 
   async get(id: string) {
@@ -54,4 +59,5 @@ export class RoomService {
       console.error(error);
     });
   }
+
 }

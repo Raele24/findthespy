@@ -22,7 +22,7 @@
 
 <p-dialog [(visible)]="createRoomVisible">
     <ng-template pTemplate="headless">
-        <div class="flex flex-column px-8 py-5 gap-4" style="border-radius: 12px; background-image: radial-gradient(circle at left top, var(--primary-400), var(--primary-700))">
+        <div class="flex flex-column px-8 py-5 gap-4" style="background-image: radial-gradient(circle at left top, var(--primary-400), var(--primary-700))">
             <p-button icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" class="cancel" (click)="closeCreateRoomDialog()" />
             <div class="inline-flex flex-column gap-2">
                 <h2 for="a" class="text-primary-50 font-semibold">Create Room</h2>
@@ -58,11 +58,10 @@
             <ng-template pTemplate="header" >
                 <div style="display: flex; justify-content: space-between;flex-direction: row;">
                     <span>List of Rooms</span>
-                    <span id="refresh" class="pi pi-refresh" 
-                        style="color: #9eade6; font-size: 1.8rem;" 
-                        (click)="refreshRooms()" 
+                    <!-- <span id="refresh" class="pi pi-refresh" 
+                        style="color: #9eade6; font-size: 1.6rem;" 
                         onmouseover="this.style.color='#5f7df4'; this.style.transition='all 0.2s';this.style.cursor='pointer'"
-                        onmouseout="this.style.color='#9eade6'" ></span>
+                        onmouseout="this.style.color='#9eade6'" ></span> -->
                 </div>
             </ng-template>
             <ng-template let-room pTemplate="item" >

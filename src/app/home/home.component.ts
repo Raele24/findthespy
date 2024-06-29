@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { RoomService } from '../_services/room.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -40,10 +41,11 @@ export class HomeComponent implements OnInit {
     while(elements.length > 0){
       elements[0].parentNode!.removeChild(elements[0]);
     } 
-    await this.refreshRooms();
 
-    
-  }
+    this.roomService.getAll().subscribe(data => {
+      this.rooms = data;
+    });
+    }
 
   joinRoom(room: Room){
     console.log(room);
@@ -71,7 +73,6 @@ export class HomeComponent implements OnInit {
     let room = await this.roomService.create(this.roomName, this.roomPassword, this.roomMaxUsers, [localStorage.getItem('username')!], localStorage.getItem('username')!);
     this.messageService.add({severity:'success', summary:'Success', detail:'Room created successfully!'});
     this.closeCreateRoomDialog();
-    await this.refreshRooms();
   }
 
   showLoginDialog(){
@@ -90,9 +91,6 @@ export class HomeComponent implements OnInit {
     this.createRoomVisible = false;
   }
 
-  async refreshRooms(){
-    let roomsJson = await this.roomService.getAll();  
-    if(roomsJson) 
-      this.rooms = Object.keys(roomsJson).map(key => roomsJson[key]);
-    }
+  
+
 }
