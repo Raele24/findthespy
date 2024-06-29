@@ -12,6 +12,8 @@ import { RoomService } from '../_services/room.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { Guid } from 'guid-typescript';
 
 @Component({
   selector: 'app-home',
@@ -33,7 +35,7 @@ export class HomeComponent implements OnInit {
 
 
 
-  constructor(private userService: UserService, private roomService: RoomService, private messageService: MessageService) { }
+  constructor(private userService: UserService, private roomService: RoomService, private messageService: MessageService, private router: Router) { }
 
   async ngOnInit() {
 
@@ -43,12 +45,23 @@ export class HomeComponent implements OnInit {
     } 
 
     this.roomService.getAll().subscribe(data => {
-      this.rooms = data;
-    });
-    }
+        this.rooms = data;
+        this.rooms = this.rooms.filter(room => room.owner !== localStorage.getItem('username'));
+        this.rooms.sort((a, b) => {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+      });
+  }
 
   joinRoom(room: Room){
-    console.log(room);
+    if(room.users.length >= room.maxUsers) return this.messageService.add({severity:'error', summary:'Error', detail:'Room is full!'});
+    if(localStorage.getItem('username') === null){
+      this.messageService.add({severity:'warning', summary:'Warning', detail:'You must be logged in to join a room!'});
+      this.showLoginDialog();
+    } 
+    room.users.push(localStorage.getItem('username')!);
+    this.roomService.update(room.id, room);
+    this.router.navigate(['/room', room.id]);
   }
 
   async login(mode: string = '') {
@@ -69,11 +82,15 @@ export class HomeComponent implements OnInit {
       this.messageService.add({severity:'warning', summary:'Warning', detail:'You must be logged in to create a room!'});
       this.closeCreateRoomDialog();
       this.showLoginDialog();
+      return;
     } 
-    let room = await this.roomService.create(this.roomName, this.roomPassword, this.roomMaxUsers, [localStorage.getItem('username')!], localStorage.getItem('username')!);
+    let room = await this.roomService.create(this.roomName, this.roomPassword, this.roomMaxUsers, [localStorage.getItem('username')!], localStorage.getItem('username')!) as Room;
     this.messageService.add({severity:'success', summary:'Success', detail:'Room created successfully!'});
     this.closeCreateRoomDialog();
+    this.router.navigate(['/room', room.id.toString()]);
   }
+
+
 
   showLoginDialog(){
     this.loginVisible = true;

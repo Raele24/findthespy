@@ -1,0 +1,7 @@
+<p-toast></p-toast>
+
+{{id}}
+<ng-container *ngIf="room">
+    <p-button *ngIf="username != room.owner" label="Leave Room" icon="pi pi-delete-left" (click)="leaveRoom()" class="p-button-warning" />
+    <p-button *ngIf="username == room.owner" label="Delete Room" icon="pi pi-trash" (click)="deleteRoom()" class="p-button-danger" />
+</ng-container>
