@@ -69,6 +69,7 @@ export class HomeComponent implements OnInit {
       this.messageService.add({severity:'warning', summary:'Warning', detail:'You must be logged in to create a room!'});
       this.closeCreateRoomDialog();
       this.showLoginDialog();
+      return;
     } 
     let room = await this.roomService.create(this.roomName, this.roomPassword, this.roomMaxUsers, [localStorage.getItem('username')!], localStorage.getItem('username')!);
     this.messageService.add({severity:'success', summary:'Success', detail:'Room created successfully!'});

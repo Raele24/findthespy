@@ -1,3 +1,7 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+
+
 <p-toast></p-toast>
 
 <!-- MODALS -->
@@ -20,25 +24,34 @@
     </ng-template>
 </p-dialog>
 
-<p-dialog [(visible)]="createRoomVisible">
-    <ng-template pTemplate="headless">
-        <div class="flex flex-column px-8 py-5 gap-4" style="background-image: radial-gradient(circle at left top, var(--primary-400), var(--primary-700))">
-            <p-button icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" class="cancel" (click)="closeCreateRoomDialog()" />
-            <div class="inline-flex flex-column gap-2">
-                <h2 for="a" class="text-primary-50 font-semibold">Create Room</h2>
-                <label for="roomName" class="text-primary-50 font-semibold">Room Name</label>
-                <input pInputText id="roomName" class="bg-white-alpha-20 border-none p-3 text-primary-50" [(ngModel)]="roomName" />
-                <label for="roomPassword" class="text-primary-50 font-semibold">Password</label>
-                <input type="password" pInputPassword id="roomPassword" class="bg-white-alpha-20 border-none p-3 text-primary-50" [(ngModel)]="roomPassword" />
-                <label for="roomMaxPlayers" class="text-primary-50 font-semibold">Max Players</label>
-                <input type="number" pInputText id="roomMaxPlayers" class="bg-white-alpha-20 border-none p-3 text-primary-50" [(ngModel)]="roomMaxUsers" />
+<p-dialog [(visible)]="createRoomVisible" class="themed-dialog">
+
+    <ng-template pTemplate="header">
+        <h2 class="dialog-header">Crea Partita</h2>
+    </ng-template>
+    <ng-template pTemplate="content">
+        <div class="dialog-content">
+            <div class="field">
+                <label for="roomName">Room Name</label>
+                <input pInputText id="roomName" [(ngModel)]="roomName" class="input-field"/>
             </div>
-            <div class="flex align-items-center gap-2">
-                <p-button label="Create" [text]="true" styleClass="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10" class="w-full" (onClick)="createRoom()"  />
+            <div class="field">
+                <label for="roomPassword">Password</label>
+                <input type="password" pInputText id="roomPassword" [(ngModel)]="roomPassword" class="input-field"/>
+            </div>
+            <div class="field">
+                <label for="roomMaxPlayers">Max Players</label>
+                <input type="number" pInputText id="roomMaxPlayers" [(ngModel)]="roomMaxUsers" class="input-field"/>
             </div>
         </div>
     </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton label="Create" icon="pi pi-check" class="dialog-button" (click)="createRoom()"></button>
+        <button pButton label="Cancel" icon="pi pi-times" class="dialog-button" (click)="closeCreateRoomDialog()"></button>
+    </ng-template>
 </p-dialog>
+
+
 <!-- END MODALS -->
 
 
@@ -48,37 +61,37 @@
 
     <div class="flex-items">
 
-    <p-button label="Create Room" icon="pi pi-plus" (click)="showCreateRoomDialog()" class="p-button-warning"/>
+        <h1>FIND THE SPY</h1>
+        <button pButton label="Crea Partita" icon="pi pi-plus" class="create-button" (click)="showCreateRoomDialog()"></button>
 
-        <p-orderList 
-            [value]="rooms" 
-            [listStyle]="{ 'max-height': '300px' }" 
-            filterBy="name" 
-            filterPlaceholder="Filter by name">
-            <ng-template pTemplate="header" >
-                <div style="display: flex; justify-content: space-between;flex-direction: row;">
-                    <span>List of Rooms</span>
-                    <!-- <span id="refresh" class="pi pi-refresh" 
-                        style="color: #9eade6; font-size: 1.6rem;" 
-                        onmouseover="this.style.color='#5f7df4'; this.style.transition='all 0.2s';this.style.cursor='pointer'"
-                        onmouseout="this.style.color='#9eade6'" ></span> -->
-                </div>
-            </ng-template>
-            <ng-template let-room pTemplate="item" >
-                <div class="flex flex-wrap p-2 align-items-center gap-3">
-                    <div class="flex-1 flex flex-column gap-2">
-                        <span class="font-bold">{{ room.name }}</span>
-                        <div class="flex align-items-center gap-2">
-                            <i class="pi pi-calendar text-sm"></i>
-                            <span>{{ room.createdAt | date: "medium" }}</span>
-                        </div>
+            <p-orderList 
+                [value]="rooms" 
+                [listStyle]="{ 'max-height': '300px' }" 
+                filterBy="name" 
+                filterPlaceholder="Filter by name">
+                <ng-template pTemplate="header" >
+                    <div style="display: flex; justify-content: space-between;flex-direction: row;">
+                        <span>AVALIABLE TO JOIN</span>
+                        <!-- <span id="refresh" class="pi pi-refresh" 
+                            style="color: #9eade6; font-size: 1.6rem;" 
+                            onmouseover="this.style.color='#5f7df4'; this.style.transition='all 0.2s';this.style.cursor='pointer'"
+                            onmouseout="this.style.color='#9eade6'" ></span> -->
                     </div>
-                    <span class="font-bold text-900">
-                        <p-button label="Join" icon="pi pi-user-plus" (click)="joinRoom(room)" class="p-button-success" />
-                    </span>
-                </div>
-            </ng-template>
-        </p-orderList>
+                </ng-template>
+                <ng-template let-room pTemplate="item" >
+                    <div class="flex flex-wrap p-2 align-items-center gap-3">
+                        <div class="flex-1 flex flex-column gap-2">
+                            <span class="font-bold">{{ room.name }}</span>
+                            <div class="flex align-items-center gap-2">
+                                <i class="pi pi-calendar text-sm"></i>
+                                <span>{{ room.createdAt | date: "medium" }}</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-900">
+                            <p-button label="Join" icon="pi pi-user-plus" (click)="joinRoom(room)" class="p-button-success" />
+                        </span>
+                    </div>
+                </ng-template>
+            </p-orderList>
     </div>
     
-</div>
