@@ -1,29 +1,15 @@
 <p-toast></p-toast>
 
 <!-- MODALS -->
-<p-dialog [(visible)]="loginVisible">
-    <ng-template pTemplate="headless">
-        <div class="flex flex-column px-8 py-5 gap-4" style="border-radius: 12px; background-image: radial-gradient(circle at left top, var(--primary-400), var(--primary-700))">
-            <p-button icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" class="cancel" (click)="closeLoginDialog()" />
-            <div class="inline-flex flex-column gap-2">
-                <h2 for="a" class="text-primary-50 font-semibold">Play as Guest</h2>
-                <label for="username" class="text-primary-50 font-semibold">Username</label>
-                <input pInputText id="username" class="bg-white-alpha-20 border-none p-3 text-primary-50" [(ngModel)]="username" />
-            </div>
-            <div class="flex align-items-center gap-2">
-                <p-button label="Enter" [text]="true" styleClass="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10" class="w-full" (onClick)="login()"  />
-            </div>
-            <h2 for="n" class="text-primary-50 font-semibold">Or login</h2>
-            <p-button (onClick)="login('google')" label="Login with Google" icon="pi pi-google"  class="p-button-google" severity="secondary" >
-            </p-button>
-        </div>
-    </ng-template>
-</p-dialog>
+<app-login-modal
+  [loginDialogVisible]="loginVisible"
+  (loginDialogVisibleChange)="waitLoginClosed($event)">
+</app-login-modal>
 
-<p-dialog [(visible)]="createRoomVisible" class="themed-dialog">
+<p-dialog [(visible)]="createRoomVisible" [modal]="true" class="themed-dialog" [draggable]="false">
 
     <ng-template pTemplate="header">
-        <h2 class="dialog-header">Crea Partita</h2>
+        <h2 class="dialog-header">Create room</h2>
     </ng-template>
     <ng-template pTemplate="content">
         <div class="dialog-content">
@@ -33,11 +19,21 @@
             </div>
             <div class="field">
                 <label for="roomPassword">Password</label>
-                <input type="password" pInputText id="roomPassword" [(ngModel)]="roomPassword" class="input-field"/>
+                <input type="password" pInputPassword id="roomPassword" [(ngModel)]="roomPassword" class="input-field"/>
             </div>
             <div class="field">
                 <label for="roomMaxPlayers">Max Players</label>
-                <input type="number" pInputText id="roomMaxPlayers" [(ngModel)]="roomMaxUsers" class="input-field"/>
+                <p-inputNumber 
+                [(ngModel)]="roomMaxUsers" 
+                [showButtons]="true" 
+                buttonLayout="horizontal" 
+                spinnerMode="horizontal" 
+                decrementButtonClass="p-button-secondary"
+                incrementButtonClass="p-button-secondary" 
+                incrementButtonIcon="pi pi-plus" 
+                decrementButtonIcon="pi pi-minus"
+                min="2"
+                max="40" />
             </div>
         </div>
     </ng-template>
@@ -46,6 +42,22 @@
     </ng-template>
 </p-dialog>
 
+<p-dialog [modal]="true" [(visible)]="joinRoomVisible" [style]="{ width: '25rem' }" class="themed-dialog" [draggable]="false">
+    <ng-template pTemplate="header">
+        <h2 class="dialog-header">Password of the room</h2>
+    </ng-template>
+    <ng-template pTemplate="content">
+        <div class="dialog-content">
+            <div class="field">
+                <label for="roomPassword">Password</label>
+                <input type="password" pInputText id="roomPassword" [(ngModel)]="joinRoomPassword" class="input-field"/>
+            </div>
+        </div>  
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton label="Join" icon="pi pi-user-plus" class="dialog-button" (click)="joinRoom()"></button>
+    </ng-template>
+</p-dialog>
 
 <!-- END MODALS -->
 
@@ -57,7 +69,7 @@
     <div class="flex-items">
 
          <h1>FIND THE SPY</h1>
-         <button pButton label="Crea Partita" class="create-button" (click)="showCreateRoomDialog()"></button>
+         <button pButton label="Create room" class="create-button" (click)="showCreateRoomDialog()"></button>
 
          <div class="separator"></div>
             
@@ -69,12 +81,13 @@
             <ng-template pTemplate="header" >
                 <div style="display: flex; justify-content: space-between;flex-direction: row;">
                     <span>AVALIABLE TO JOIN</span>
+                    <p-progressSpinner ariaLabel="loading" styleClass="w-2rem h-2rem" *ngIf="listLoading" />
                 </div>
             </ng-template>
             <ng-template let-room pTemplate="item" >
                 <div class="flex flex-wrap p-2 align-items-center gap-3">
                     <div class="flex-1 flex flex-column gap-2">
-                        <div class="font-bold" style="display: flex;justify-content: space-between;flex-direction: row;">
+                        <div class="font-bold" style="display: flex;justify-content: space-between;flex-direction: row;gap:20vw">
                             <div>
                                 <span id="refresh" class="pi pi-circle-fill" *ngIf="room.users.length < room.maxUsers"
                                 style="color: #26ff00;"></span>  
@@ -82,15 +95,15 @@
                                 style="color: #ff0000;"></span>
                                 &nbsp; {{ room.name}}
                             </div>
-                            <div>{{room.users.length}}/{{room.maxUsers}} <span id="refresh" class="pi pi-user"></span></div>  
+                            <div>{{room.users.length}}/{{room.maxUsers}} <span id="refresh" class="pi pi-users"></span></div>  
                         </div>
                         <div class="flex align-items-center gap-2">
-                            <i class="pi pi-calendar text-sm"></i>
-                            <span>{{ room.createdAt | date: "medium" }}</span>
+                            <i class="pi pi-user text-sm"></i>
+                            <span>{{ room.owner }}</span>
                         </div>
                     </div>
                     <span class="font-bold text-900">
-                        <p-button label="Join" icon="pi pi-user-plus" (click)="joinRoom(room)" class="p-button-success" *ngIf="room.users.length < room.maxUsers" />
+                        <p-button label="Join" icon="pi pi-user-plus" (click)="showJoinRoomDialog(room)" class="p-button-success" *ngIf="room.users.length < room.maxUsers" />
                         <p-button label="Full" icon="pi pi-user-plus" class="p-button-danger" *ngIf="room.users.length == room.maxUsers" disabled=""/>
                     </span>
                 </div>

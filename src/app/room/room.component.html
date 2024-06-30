@@ -1,5 +1,31 @@
 <p-toast></p-toast>
 
+<app-login-modal
+  [loginDialogVisible]="loginVisible"
+  (loginDialogVisibleChange)="waitLoginClosed($event)">
+</app-login-modal>
+
+<p-toast />
+<p-confirmDialog>
+    <ng-template pTemplate="message" let-message>
+        <div class="flex flex-column align-items-center w-full gap-3 border-bottom-1 surface-border">
+            <i class="pi pi-exclamation-circle text-6xl text-primary-500"></i>
+            <p>{{ message.message }}</p>
+        </div>
+    </ng-template>
+</p-confirmDialog>
+
+<p-dialog 
+    [modal]="true"
+    [(visible)]="visibleDeleteRoomDialog" 
+    [style]="{ width: '50rem' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" >
+    <div style="display: flex;align-items: center;justify-content: center;flex-direction: column;">
+            <span class="pi pi-exclamation-circle"style="color: red;">The room is closed</span>  
+            <p-button label="OK" icon="pi pi-check" (click)="closeDeleteRoomDialog()" class="p-button-error" />
+    </div>
+</p-dialog>
+
 {{id}}
 <ng-container *ngIf="room">
     <p-button *ngIf="username != room.owner" label="Leave Room" icon="pi pi-delete-left" (click)="leaveRoom()" class="p-button-warning" />
