@@ -26,10 +26,8 @@
                 <p-inputNumber 
                 [(ngModel)]="roomMaxUsers" 
                 [showButtons]="true" 
-                buttonLayout="horizontal" 
+                buttonLayout="horizontal"
                 spinnerMode="horizontal" 
-                decrementButtonClass="p-button-secondary"
-                incrementButtonClass="p-button-secondary" 
                 incrementButtonIcon="pi pi-plus" 
                 decrementButtonIcon="pi pi-minus"
                 min="2"
@@ -109,7 +107,7 @@
                         </div>
                     </div>
                     <span class="font-bold text-900">
-                        <p-button label="Join" icon="pi pi-user-plus" (click)="showJoinRoomDialog(room)" class="p-button-success" *ngIf="room.users.length < room.maxUsers" />
+                        <p-button label="Join" icon="pi pi-user-plus" (click)="showJoinRoomDialog(room)" class="p-button-success" id="join" *ngIf="room.users.length < room.maxUsers" />
                         <p-button label="Full" icon="pi pi-user-plus" class="p-button-danger" *ngIf="room.users.length == room.maxUsers" disabled=""/>
                     </span>
                 </div>
