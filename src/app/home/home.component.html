@@ -80,20 +80,26 @@
             filterPlaceholder="Filter by name">
             <ng-template pTemplate="header" >
                 <div style="display: flex; justify-content: space-between;flex-direction: row;">
-                    <span>AVALIABLE TO JOIN</span>
+                    <span>ROOMS</span>
                     <p-progressSpinner ariaLabel="loading" styleClass="w-2rem h-2rem" *ngIf="listLoading" />
                 </div>
             </ng-template>
             <ng-template let-room pTemplate="item" >
                 <div class="flex flex-wrap p-2 align-items-center gap-3">
                     <div class="flex-1 flex flex-column gap-2">
-                        <div class="font-bold" style="display: flex;justify-content: space-between;flex-direction: row;gap:20vw">
-                            <div>
+                        <div class="font-bold" style="display: flex;justify-content: space-between;flex-direction: row;">
+                            <div style="display: flex;align-items: center;flex-direction: row;gap:10px">
                                 <span id="refresh" class="pi pi-circle-fill" *ngIf="room.users.length < room.maxUsers"
                                 style="color: #26ff00;"></span>  
                                 <span id="refresh" class="pi pi-circle-fill" *ngIf="room.users.length == room.maxUsers"
                                 style="color: #ff0000;"></span>
-                                &nbsp; {{ room.name}}
+                                <div style="white-space: nowrap;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                width: 30vw;
+                                text-align: start;"
+                                
+                                > {{ room.name}} </div>
                             </div>
                             <div>{{room.users.length}}/{{room.maxUsers}} <span id="refresh" class="pi pi-users"></span></div>  
                         </div>
