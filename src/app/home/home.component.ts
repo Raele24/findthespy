@@ -16,10 +16,23 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { RoomComponent } from '../room/room.component';
 
 import { InputNumberModule } from 'primeng/inputnumber';
+import { LoginModalComponent } from '../_modals/login-modal/login-modal.component';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ToolbarModule, AvatarModule, DialogModule, ButtonModule, OrderListModule,ToastModule, ProgressSpinnerModule, InputNumberModule, FormsModule, CommonModule, RoomComponent],
+  imports: [ToolbarModule,
+             AvatarModule,
+            DialogModule, 
+            ButtonModule, 
+            OrderListModule,
+            ToastModule, 
+            ProgressSpinnerModule, 
+            InputNumberModule, 
+            FormsModule, 
+            CommonModule, 
+            RoomComponent,
+            LoginModalComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.less'
 })
@@ -39,6 +52,7 @@ export class HomeComponent implements OnInit {
   //join room
   tempRoom!: Room;
   joinRoomPassword: string = '';
+  closedLogin: any;
 
 
 
@@ -51,7 +65,7 @@ export class HomeComponent implements OnInit {
       elements[0].parentNode!.removeChild(elements[0]);
     } 
 
-    this.roomService.getAll().subscribe(data => {
+    this.roomService.getAllObservable().subscribe(data => {
         this.listLoading = true;
         this.rooms = data;
         this.rooms = this.rooms.filter(room => room.owner !== localStorage.getItem('username'));
@@ -76,15 +90,6 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/room', room.id]);
   }
 
-  async login(mode: string = '') {
-    let res;
-    if(mode === 'google') res = await this.userService.loginGoogle();
-    else res = await this.userService.login();
-    if(mode === 'google' && res) this.username = res.displayName!;
-    localStorage.setItem('username', this.username);
-    return this.closeLoginDialog();
-  }
-
   async createRoom(){ 
     if(this.roomName === '') return this.messageService.add({severity:'error', summary:'Error', detail:'Room name is required!'});
     if(this.roomPassword === '') return this.messageService.add({severity:'error', summary:'Error', detail:'Room password is required!'});
@@ -95,6 +100,7 @@ export class HomeComponent implements OnInit {
       return;
     } 
     let room = await this.roomService.create(this.roomName, this.roomPassword, this.roomMaxUsers, [localStorage.getItem('username')!], localStorage.getItem('username')!) as Room;
+    if(room === null) return this.messageService.add({severity:'error', summary:'Error', detail:'Room name already exists!'});
     this.messageService.add({severity:'success', summary:'Success', detail:'Room created successfully!'});
     this.closeCreateRoomDialog();
     this.router.navigate(['/room', room.id.toString()]);
@@ -104,12 +110,12 @@ export class HomeComponent implements OnInit {
     this.loginVisible = true;
   }
 
-  showCreateRoomDialog(){
-    this.createRoomVisible = true;
+  waitLoginClosed(event: boolean) {
+    this.loginVisible = event;
   }
 
-  closeLoginDialog(){
-    this.loginVisible = false;
+  showCreateRoomDialog(){
+    this.createRoomVisible = true;
   }
 
   closeCreateRoomDialog(){

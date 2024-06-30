@@ -15,6 +15,8 @@ export class RoomService {
   )  { }
 
   async create(name: string, password: string, maxUsers: number, users: string[], owner: string) {
+    let rooms = await this.getAll();
+    if(rooms!.find(r => r.name === name)) return null;
     password = Md5.hashStr(password).toString();
     const room = new Room(name, password, maxUsers, users, owner);
     let resolve = set(ref(this.db, 'rooms/' + room.id), {
@@ -33,7 +35,20 @@ export class RoomService {
     });
   }
 
-  getAll(): Observable<any[]> {
+  async getAll() {
+    return get(query(ref(this.db, 'rooms'))).then((snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        return Object.keys(data).map(k => ({ id: k, ...data[k] }));
+      } else {
+        return [];
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
+  getAllObservable(): Observable<any[]> {
     return interval(1000).pipe(
       switchMap(() => get(query(ref(this.db, 'rooms'), limitToLast(100))).then((snapshot) => {
         if (snapshot.exists()) {

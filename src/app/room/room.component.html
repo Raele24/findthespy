@@ -1,5 +1,10 @@
 <p-toast></p-toast>
 
+<app-login-modal
+  [loginDialogVisible]="loginVisible"
+  (loginDialogVisibleChange)="waitLoginClosed($event)">
+</app-login-modal>
+
 <p-toast />
 <p-confirmDialog>
     <ng-template pTemplate="message" let-message>
