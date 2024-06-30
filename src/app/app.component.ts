@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { UserService } from './_services/user.service';
 
 @Component({
   selector: 'app-root',
@@ -14,12 +13,10 @@ import { UserService } from './_services/user.service';
 export class AppComponent implements OnInit {
   title = 'findthespy';
 
-  constructor(private router: Router, private userService: UserService) { }
+  constructor() { }
 
   ngOnInit(): void {
-    if(!this.userService.isLogged()) {
-    //  this.router.navigate(['/login']);
-    }
+    
   }
   
 }

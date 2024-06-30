@@ -11,27 +11,34 @@ import { CommonModule } from '@angular/common';
 import { RoomService } from '../_services/room.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { Guid } from 'guid-typescript';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { RoomComponent } from '../room/room.component';
 
+import { InputNumberModule } from 'primeng/inputnumber';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ToolbarModule, AvatarModule, DialogModule, ButtonModule, OrderListModule,ToastModule, FormsModule, CommonModule],
+  imports: [ToolbarModule, AvatarModule, DialogModule, ButtonModule, OrderListModule,ToastModule, ProgressSpinnerModule, InputNumberModule, FormsModule, CommonModule, RoomComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.less'
 })
 export class HomeComponent implements OnInit {
   loginVisible: boolean = false;
   createRoomVisible: boolean = false;
+  joinRoomVisible: boolean = false;
   username: string = '';
   rooms: Room[] = [];
+  listLoading: boolean = true;
 
   //create room
   roomName: string = '';
   roomPassword: string = '';
   roomMaxUsers: number = 4;
+
+  //join room
+  tempRoom!: Room;
+  joinRoomPassword: string = '';
 
 
 
@@ -45,20 +52,25 @@ export class HomeComponent implements OnInit {
     } 
 
     this.roomService.getAll().subscribe(data => {
+        this.listLoading = true;
         this.rooms = data;
         this.rooms = this.rooms.filter(room => room.owner !== localStorage.getItem('username'));
         this.rooms.sort((a, b) => {
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         });
+        this.listLoading = false;
       });
   }
 
-  joinRoom(room: Room){
-    if(room.users.length >= room.maxUsers) return this.messageService.add({severity:'error', summary:'Error', detail:'Room is full!'});
-    if(localStorage.getItem('username') === null){
-      this.messageService.add({severity:'warning', summary:'Warning', detail:'You must be logged in to join a room!'});
+  joinRoom(){
+    let room = this.tempRoom;
+    if(localStorage.getItem('username') === null || localStorage.getItem('username') === '' || localStorage.getItem('username') === undefined){
+      this.messageService.add({severity:'error', summary:'Warning', detail:'You must be logged in to join a room!'});
       this.showLoginDialog();
+      return;
     } 
+    if(room.users.length >= room.maxUsers) return this.messageService.add({severity:'error', summary:'Error', detail:'Room is full!'});
+    if(this.roomService.checkPassword(room, this.joinRoomPassword) === false) return this.messageService.add({severity:'error', summary:'Error', detail:'Wrong password!'});
     room.users.push(localStorage.getItem('username')!);
     this.roomService.update(room.id, room);
     this.router.navigate(['/room', room.id]);
@@ -70,17 +82,15 @@ export class HomeComponent implements OnInit {
     else res = await this.userService.login();
     if(mode === 'google' && res) this.username = res.displayName!;
     localStorage.setItem('username', this.username);
-    this.closeLoginDialog();
-    this.showCreateRoomDialog();
+    return this.closeLoginDialog();
   }
 
   async createRoom(){ 
     if(this.roomName === '') return this.messageService.add({severity:'error', summary:'Error', detail:'Room name is required!'});
     if(this.roomPassword === '') return this.messageService.add({severity:'error', summary:'Error', detail:'Room password is required!'});
     if(this.roomMaxUsers === 0) return this.messageService.add({severity:'error', summary:'Error', detail:'Room max users is required!'});
-    if(localStorage.getItem('username') === null){
-      this.messageService.add({severity:'warning', summary:'Warning', detail:'You must be logged in to create a room!'});
-      this.closeCreateRoomDialog();
+    if(localStorage.getItem('username') === null || localStorage.getItem('username') === '' || localStorage.getItem('username') === undefined){
+      this.messageService.add({severity:'error', summary:'Warning', detail:'You must be logged in to create a room!'});
       this.showLoginDialog();
       return;
     } 
@@ -89,8 +99,6 @@ export class HomeComponent implements OnInit {
     this.closeCreateRoomDialog();
     this.router.navigate(['/room', room.id.toString()]);
   }
-
-
 
   showLoginDialog(){
     this.loginVisible = true;
@@ -108,6 +116,13 @@ export class HomeComponent implements OnInit {
     this.createRoomVisible = false;
   }
 
-  
 
+  showJoinRoomDialog(room: Room){
+    this.tempRoom = room;
+    this.joinRoomVisible = true;
+  }
+
+  closeJoinRoomDialog(){
+    this.joinRoomVisible = false;
+  }
 }

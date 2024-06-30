@@ -17,7 +17,6 @@ export class RoomService {
   async create(name: string, password: string, maxUsers: number, users: string[], owner: string) {
     password = Md5.hashStr(password).toString();
     const room = new Room(name, password, maxUsers, users, owner);
-    console.log(room);
     let resolve = set(ref(this.db, 'rooms/' + room.id), {
       name: name,
       password: password,
@@ -61,6 +60,20 @@ export class RoomService {
     });
   }
 
+  getObservable(id: Guid): Observable<any> {
+    return interval(1000).pipe(
+      switchMap(() => get(child(ref(this.db), 'rooms/' + id)).then((snapshot) => {
+        if (snapshot.exists()) {
+          return snapshot.val();
+        } else {
+          return null;
+        }
+      }).catch(error => {
+        console.error(error);
+        return null;
+      })));
+  }
+
   async update(id: Guid, room: Room) {
     return set(ref(this.db, 'rooms/' + id), {
       name: room.name,
@@ -90,6 +103,10 @@ export class RoomService {
     }).catch((error) => {
       console.error(error);
     });
+  }
+
+  checkPassword(room: Room, password: string) {
+    return room.password === Md5.hashStr(password).toString();
   }
 
 }
