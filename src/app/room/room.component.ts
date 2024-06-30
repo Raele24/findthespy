@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { RoomService } from '../_services/room.service';
 import { ButtonModule } from 'primeng/button';
 import { Guid } from 'guid-typescript';
@@ -32,13 +32,14 @@ export class RoomComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
-    if(this.room.owner === this.username) {
-      this.deleteRoom();
-    } else {
-      this.leaveRoom();
-    }
-  }
+  @HostListener('window:beforeunload')
+  async ngOnDestroy() {
+     if(this.room.owner === this.username) {
+       this.deleteRoom();
+     } else {
+       this.leaveRoom();
+     }
+   }
 
   async leaveRoom() {
     let idGuid = Guid.parse(this.id);
