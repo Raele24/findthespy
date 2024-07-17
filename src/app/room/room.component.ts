@@ -9,11 +9,13 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { LoginModalComponent } from '../_modals/login-modal/login-modal.component';
+import { SplitterModule } from 'primeng/splitter';
+import { PanelModule } from 'primeng/panel';
 
 @Component({
   selector: 'app-room',
   standalone: true,
-  imports: [ButtonModule, CommonModule, ToastModule, ConfirmDialogModule, DialogModule, LoginModalComponent],
+  imports: [ButtonModule, CommonModule, ToastModule, ConfirmDialogModule, DialogModule, LoginModalComponent, SplitterModule, PanelModule],
   templateUrl: './room.component.html',
   styleUrl: './room.component.less'
 })

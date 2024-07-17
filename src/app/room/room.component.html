@@ -1,3 +1,4 @@
+
 <p-toast></p-toast>
 
 <app-login-modal
@@ -25,9 +26,35 @@
             <p-button label="OK" icon="pi pi-check" (click)="closeDeleteRoomDialog()" class="p-button-error" />
     </div>
 </p-dialog>
+<div class="container">
+<div class="lobby-container">
+    <div class="p-grid">
+      <div class="p-col-6">
+        <p-panel header="LOBBY INFORMATION" class="panel">
+            <img src="../../assets/images/spy.png" alt="Immagine Lobby" style="width:100%;">
+            <p>Descrizione lobby</p>
+          </p-panel>
+      </div>
+      <div class="p-col-6">
 
-{{id}}
-<ng-container *ngIf="room">
-    <p-button *ngIf="username != room.owner" label="Leave Room" icon="pi pi-delete-left" (click)="leaveRoom()" class="p-button-warning" />
-    <p-button *ngIf="username == room.owner" label="Delete Room" icon="pi pi-trash" (click)="deleteRoom()" class="p-button-danger" />
-</ng-container>
+        <p-panel header="PLAYER LIST" class="panel">
+            <ul>
+              <li>Giocatore 1</li>
+              <li>Giocatore 2</li>
+            </ul>
+        </p-panel>
+
+        <p-button label="delete room"/>
+        <p-button label="return to lobby"/>
+
+        <!-- NON VANNO
+        <ng-container *ngIf="room">
+            
+            <p-button *ngIf="username == room.owner" label="Delete Room" icon="pi pi-trash" (click)="deleteRoom()" class="p-button-danger" />
+            
+        </ng-container>
+        -->
+      </div>
+    </div>
+  </div>
+  </div>
