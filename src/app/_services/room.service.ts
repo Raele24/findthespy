@@ -89,7 +89,12 @@ export class RoomService {
       })));
   }
 
-  async update(id: Guid, room: Room) {
+  async update(id: Guid, room: Room): Promise<boolean> {
+    let currentRoom = await this.get(id); 
+    if(currentRoom === null) return false;
+    if(!this.checkRoomSettingsBeforeUpdate(currentRoom, room)){
+      return false;
+    }
     return set(ref(this.db, 'rooms/' + id), {
       name: room.name,
       password: room.password,
@@ -99,10 +104,26 @@ export class RoomService {
       status: room.status,
       createdAt: room.createdAt
     }).then(() => {
-      return room;
+      return true;
     }).catch((error) => {
-      console.error(error);
+      return false;
     });
+  }
+
+  checkRoomSettingsBeforeUpdate(currentRoom: Room, room: Room): boolean {
+    if(room.users.length > room.maxUsers) {
+      return false;
+    }
+    if(room.users.length !== new Set(room.users).size) {
+      return false;
+    }
+    if(currentRoom.owner !== room.owner) {
+      return false;
+    }
+    if(currentRoom.status !== "OPEN") {
+      return false;
+    }
+    return true;
   }
 
   async leave(id: Guid, username: string) {

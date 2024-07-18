@@ -85,8 +85,6 @@ export class HomeComponent implements OnInit {
     } 
     if(room.users.length >= room.maxUsers) return this.messageService.add({severity:'error', summary:'Error', detail:'Room is full!'});
     if(this.roomService.checkPassword(room, this.joinRoomPassword) === false) return this.messageService.add({severity:'error', summary:'Error', detail:'Wrong password!'});
-    room.users.push(localStorage.getItem('username')!);
-    this.roomService.update(room.id, room);
     this.router.navigate(['/room', room.id]);
   }
 

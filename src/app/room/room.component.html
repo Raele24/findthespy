@@ -7,54 +7,73 @@
 </app-login-modal>
 
 <p-toast />
-<p-confirmDialog>
-    <ng-template pTemplate="message" let-message>
-        <div class="flex flex-column align-items-center w-full gap-3 border-bottom-1 surface-border">
-            <i class="pi pi-exclamation-circle text-6xl text-primary-500"></i>
-            <p>{{ message.message }}</p>
-        </div>
+
+<p-dialog 
+    [modal]="true"
+    [(visible)]="deletingRoomDialog" 
+    [style]="{ width: '50rem' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [draggable]="false">
+    <ng-template pTemplate="header">
+      <h2 class="dialog-header">You want to delete this room?</h2>
     </ng-template>
-</p-confirmDialog>
+    <div style="display: flex;align-items: center;justify-content: center">
+      <p-button label="YES" icon="pi pi-check" (click)="deleteRoom()" class="p-button-error" />
+      <p-button label="NO" icon="pi pi-times" (click)="closeDeletingRoomDialog()" class="p-button-success" />
+    </div>
+</p-dialog>
+
+<p-dialog 
+    [modal]="true"
+    [(visible)]="leavingRoomDialog" 
+    [style]="{ width: '50rem' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [draggable]="false">
+    <ng-template pTemplate="header">
+      <h2 class="dialog-header">You want to leave this room?</h2>
+    </ng-template>
+    <div style="display: flex;align-items: center;justify-content: center">
+      <p-button label="YES" icon="pi pi-check" (click)="leaveRoom()" class="p-button-error" />
+      <p-button label="NO" icon="pi pi-times" (click)="closeLeavingRoomDialog()" class="p-button-success" />
+    </div>
+</p-dialog>
+
+
 
 <p-dialog 
     [modal]="true"
     [(visible)]="visibleDeleteRoomDialog" 
-    [style]="{ width: '50rem' }" 
-    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" >
-    <div style="display: flex;align-items: center;justify-content: center;flex-direction: column;">
-            <span class="pi pi-exclamation-circle"style="color: red;">The room is closed</span>  
-            <p-button label="OK" icon="pi pi-check" (click)="closeDeleteRoomDialog()" class="p-button-error" />
+    [style]="{ width: '20rem' }" [draggable]="false" >
+    <ng-template pTemplate="header">
+      <h2 class="dialog-header" style="color: red;">{{errorMessage}}</h2>
+    </ng-template>
+    <div style="display: flex;align-items: center;justify-content: center;flex-direction: column;gap: 10px;">
+            <p-button label="OK" icon="pi pi-exclamation-circle" (click)="closeDeleteRoomDialog()" class="p-button-error" />
     </div>
 </p-dialog>
+
+<ng-container *ngIf="room">
 <div class="container">
 <div class="lobby-container">
     <div class="p-grid">
       <div class="p-col-6">
         <p-panel header="LOBBY INFORMATION" class="panel">
-            <img src="../../assets/images/spy.png" alt="Immagine Lobby" style="width:100%;">
+            <img src="../../assets/images/spy.png" alt="Lobby image" style="width:100%;">
             <p>Descrizione lobby</p>
           </p-panel>
       </div>
       <div class="p-col-6">
 
         <p-panel header="PLAYER LIST" class="panel">
-            <ul>
-              <li>Giocatore 1</li>
-              <li>Giocatore 2</li>
+            <ul *ngFor="let user of users">
+              <li>{{user}} <span *ngIf="isOwnerFromUsername(user)" style="color: green;">(owner)</span></li>
             </ul>
         </p-panel>
-
-        <p-button label="delete room"/>
-        <p-button label="return to lobby"/>
-
-        <!-- NON VANNO
-        <ng-container *ngIf="room">
-            
-            <p-button *ngIf="username == room.owner" label="Delete Room" icon="pi pi-trash" (click)="deleteRoom()" class="p-button-danger" />
-            
+        <ng-container *ngIf="isOwner()">
+          <button pButton  label="Start Game" icon="pi pi-play" (click)="startGame()" class="p-button-success" > </button>
+          <button pButton label="Delete Room" icon="pi pi-trash" (click)="openDeletingRoomDialog()" class="p-button-danger" > </button>
         </ng-container>
-        -->
+        <p-button *ngIf="!isOwner()" icon="pi pi-sign-out" label="Return to lobby" class="p-button-danger" (click)="openLeavingRoomDialog()" />
       </div>
     </div>
-  </div>
-  </div>
+</div>
+</div>
+</ng-container>
