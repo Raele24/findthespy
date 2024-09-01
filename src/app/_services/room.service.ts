@@ -145,4 +145,18 @@ export class RoomService {
     return room.password === Md5.hashStr(password).toString();
   }
 
+  async setStatus(id: Guid, status: string) {
+    let room = await this.get(id);
+    if(room === null) return;
+    room.status = status;
+    return this.update(id, room);
+  }
+
+  async setGameId(id: Guid, gameId: string) {
+    let room = await this.get(id);
+    if(room === null) return;
+    room.gameId = gameId;
+    return this.update(id, room);
+  }
+
 }

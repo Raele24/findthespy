@@ -9,6 +9,7 @@ export class Room {
     owner: string;
     status: string;
     createdAt: Date;
+    gameId: string;
     constructor(name: string, password: string, maxUsers: number, users: string[], owner: string){
         this.id = Guid.create();
         this.name = name;
@@ -18,5 +19,6 @@ export class Room {
         this.owner = owner;
         this.status = 'OPEN';
         this.createdAt = new Date();
+        this.gameId = '';
     }
 }

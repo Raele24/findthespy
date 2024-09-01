@@ -11,6 +11,8 @@ import { DialogModule } from 'primeng/dialog';
 import { LoginModalComponent } from '../_modals/login-modal/login-modal.component';
 import { SplitterModule } from 'primeng/splitter';
 import { PanelModule } from 'primeng/panel';
+import { GameService } from '../_services/game.service';
+import { Game } from '../_models/Game';
 
 @Component({
   selector: 'app-room',
@@ -31,7 +33,7 @@ export class RoomComponent implements OnInit, OnDestroy{
 
   users: string[] = [];
 
-  constructor(private roomService: RoomService, private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService) { window.addEventListener('beforeunload', this.beforeUnloadHandler.bind(this)); }
+  constructor(private roomService: RoomService, private gameService: GameService, private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService) { window.addEventListener('beforeunload', this.beforeUnloadHandler.bind(this)); }
 
   async ngOnInit() {
     this.id = this.router.url.split('/')[2];
@@ -56,21 +58,29 @@ export class RoomComponent implements OnInit, OnDestroy{
       this.room = data;
       this.checkRoomAvailability();
       this.updateRoomInfo();
+      this.checkIfGameStarted();
     });
   }
-
+  
+  updateRoomInfo()
+  {
+    this.users = this.room.users;
+  }  
+  
   isOwner() {
     return this.room.owner === this.username;
+  }
+
+  checkIfGameStarted() {
+    if(this.room.status === 'IN-GAME') {
+      this.router.navigate(['/game/' + this.id + '/' + this.room.gameId]);
+    }
   }
 
   isOwnerFromUsername(username: string) {
     return this.room.owner === username;
   }
 
-  updateRoomInfo()
-  {
-    this.users = this.room.users;
-  }  
 
   checkRoomAvailability() {
     if(this.room === null) {
@@ -140,11 +150,15 @@ export class RoomComponent implements OnInit, OnDestroy{
     window.location.reload()
   }
 
-  startGame() {
-    if(this.room.users.length < 3) {
-      this.messageService.add({severity:'error', summary:'Error', detail:'Not enough players to start game'});
-      return;
-    }
+  async startGame() {
+    // if(this.room.users.length < 3) {
+    //   this.messageService.add({severity:'error', summary:'Error', detail:'Not enough players to start game'});
+    //   return;
+    // } 
+    this.roomService.setStatus(Guid.parse(this.id), 'IN-GAME');
+    this.roomService.setGameId(Guid.parse(this.id), Guid.create().toString());
+    let game = await this.gameService.create(Guid.parse(this.id), this.room.users, this.username, 1) as Game;
+    this.router.navigate(['/game/' + this.id + '/' + game.id]);
   }
 
 }

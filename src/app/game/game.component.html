@@ -1,0 +1,13 @@
+<p-dialog 
+    [modal]="true"
+    [(visible)]="visibleDeleteGameDialog" 
+    [style]="{ width: '20rem' }" [draggable]="false" >
+    <ng-template pTemplate="header">
+      <h2 class="dialog-header" style="color: red;">{{errorMessage}}</h2>
+    </ng-template>
+    <div style="display: flex;align-items: center;justify-content: center;flex-direction: column;gap: 10px;">
+            <p-button label="OK" icon="pi pi-exclamation-circle" (click)="closeDeleteGameDialog()" class="p-button-error" />
+    </div>
+</p-dialog>
+
+<p>game works!</p>
