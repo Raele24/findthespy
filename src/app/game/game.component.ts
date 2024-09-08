@@ -58,7 +58,7 @@ export class GameComponent implements OnInit, OnDestroy {
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: any) {
     if(this.isOwner()) {
-      this.deleteRoom();
+      this.deleteRoomAndGame();
     } 
     event.returnValue = '';
   }
@@ -71,7 +71,7 @@ export class GameComponent implements OnInit, OnDestroy {
     window.removeEventListener('beforeunload', this.beforeUnloadHandler.bind(this));
   }
 
-  async deleteRoom() {
+  async deleteRoomAndGame() {
     let idGuid = Guid.parse(this.gameId);
     await this.gameService.delete(idGuid);
     let roomId = Guid.parse(this.id);

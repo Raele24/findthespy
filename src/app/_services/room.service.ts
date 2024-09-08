@@ -26,7 +26,8 @@ export class RoomService {
       users: users,
       owner: owner,
       status: 'OPEN',
-      createdAt: room.createdAt.toUTCString()
+      createdAt: room.createdAt.toUTCString(),
+      gameId: ''
     });
     return resolve.then(() => {
       return room;
@@ -102,7 +103,8 @@ export class RoomService {
       users: room.users,
       owner: room.owner,
       status: room.status,
-      createdAt: room.createdAt
+      createdAt: room.createdAt,
+      gameId: room.gameId
     }).then(() => {
       return true;
     }).catch((error) => {
@@ -120,7 +122,7 @@ export class RoomService {
     if(currentRoom.owner !== room.owner) {
       return false;
     }
-    if(currentRoom.status !== "OPEN") {
+    if(currentRoom.status !== "OPEN" && currentRoom.status !== "IN-GAME") {
       return false;
     }
     return true;
