@@ -68,7 +68,7 @@ export class HomeComponent implements OnInit {
     this.roomService.getAllObservable().subscribe(data => {
         this.listLoading = true;
         this.rooms = data;
-        this.rooms = this.rooms.filter(room => room.owner !== localStorage.getItem('username'));
+        this.rooms = this.rooms.filter(room => room.owner !== localStorage.getItem('username') && room.status != 'IN-GAME');
         this.rooms.sort((a, b) => {
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         });

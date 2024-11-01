@@ -65,6 +65,9 @@ export class RoomComponent implements OnInit, OnDestroy{
   updateRoomInfo()
   {
     //TODO
+    if(this.room === null) {
+      return;
+    }
     this.users = this.room.users;
   }  
   
@@ -73,7 +76,7 @@ export class RoomComponent implements OnInit, OnDestroy{
   }
 
   checkIfGameStarted() {
-    if(this.room.status === 'IN-GAME') {
+    if(this.room.status === 'IN-GAME' && this.room.users.includes(this.username)) {
       this.router.navigate(['/game/' + this.id + '/' + this.room.gameId]);
     }
   }
@@ -152,13 +155,12 @@ export class RoomComponent implements OnInit, OnDestroy{
   }
 
   async startGame() {
-    // if(this.room.users.length < 3) {
-    //   this.messageService.add({severity:'error', summary:'Error', detail:'Not enough players to start game'});
-    //   return;
-    // } 
+    if(this.room.users.length < 3) {
+      this.messageService.add({severity:'error', summary:'Error', detail:'Not enough players to start game'});
+      return;
+    } 
     await this.roomService.setStatus(Guid.parse(this.id), 'IN-GAME');
     let game = await this.gameService.create(Guid.parse(this.id), this.room.users, this.username, 1) as Game;
-    console.log(game);
     await this.roomService.setGameId(Guid.parse(this.id), game.id.toString());
     this.router.navigate(['/game/' + this.id + '/' + game.id]);
   }

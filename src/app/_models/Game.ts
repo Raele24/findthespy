@@ -6,13 +6,17 @@ export class Game {
     users: string[];
     spyNumber: number;
     owner: string;
+    currentWord: string;
     spies: string[];
+    round: number;
     public constructor(roomId: Guid, users: string[], owner: string, spyNumber: number, spies: string[]) {
         this.id = Guid.create();
         this.roomId = roomId;
         this.users = users;
         this.owner = owner;
         this.spyNumber = spyNumber;
-        this.spies = [];
+        this.spies = spies;
+        this.currentWord = '';
+        this.round = 1;
     }
 }

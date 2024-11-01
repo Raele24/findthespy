@@ -1,13 +1,36 @@
+<p-toast />
+<p-confirmDialog />
 <p-dialog 
-    [modal]="true"
-    [(visible)]="visibleDeleteGameDialog" 
-    [style]="{ width: '20rem' }" [draggable]="false" >
-    <ng-template pTemplate="header">
-      <h2 class="dialog-header" style="color: red;">{{errorMessage}}</h2>
-    </ng-template>
-    <div style="display: flex;align-items: center;justify-content: center;flex-direction: column;gap: 10px;">
-            <p-button label="OK" icon="pi pi-exclamation-circle" (click)="closeDeleteGameDialog()" class="p-button-error" />
-    </div>
+[modal]="true"
+[(visible)]="visibleDeleteGameDialog" 
+[style]="{ width: '20rem' }" [draggable]="false" >
+<ng-template pTemplate="header">
+  <h2 class="dialog-header" style="color: red;">{{errorMessage}}</h2>
+</ng-template>
+<div style="display: flex;align-items: center;justify-content: center;flex-direction: column;gap: 10px;">
+        <p-button label="OK" icon="pi pi-exclamation-circle" (click)="closeDeleteGameDialog()" class="p-button-error" />
+</div>
 </p-dialog>
 
-<p>game works!</p>
+<ng-container *ngIf="loaded">
+  <div class="center">
+  <p-card [header]="header" [subheader]="subHeader" [style]="{ width: '90vw', height: '100%', backgroundColor: colorBackground}">
+    <p>
+        {{label}}
+    </p>
+    <ng-template pTemplate="footer" *ngIf="isOwnerBool">
+        <div class="flex gap-3 mt-1">
+            <p-button label="Close room" severity="secondary" class="w-full" styleClass="w-full" (click)="closeRoom()"/>
+            <p-button label="Next round" class="w-full" styleClass="w-full" (click)="nextRound()" />
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer" *ngIf="!isOwnerBool">
+      <div class="flex gap-3 mt-1">
+          <p-button label="Quit room" severity="secondary" class="w-full" styleClass="w-full" (click)="quit()" />
+      </div>
+  </ng-template>
+  </p-card>
+  </div>
+</ng-container>
+
